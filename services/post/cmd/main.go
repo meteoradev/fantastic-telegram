@@ -73,7 +73,7 @@ func main() {
 	// Prepare producer
 	brokers := []string{cfg.KafkaHost + ":" + strconv.FormatInt(int64(cfg.KafkaPort), 10)}
 	writer := kafka.NewWriter(kafka.WriterConfig{Brokers: brokers, Topic: cfg.KafkaTopic})
-	defer writer.Close()
+	defer func() { _ = writer.Close() }()
 	outboxRepo := o.NewOutboxRepository(DB)
 	producer := outbox.NewOutboxProducer(outboxRepo, writer, 5*time.Second)
 	ctx = logger.WithContext(ctx)
@@ -123,7 +123,13 @@ func main() {
 			Err(err).
 			Msg("Server shutdown failed")
 	}
-	grpcClient.Conn.Close()
-	DB.Close()
-	rdb.Close()
+	if err := grpcClient.Conn.Close(); err != nil {
+		logger.Fatal().Err(err).Msg("Fatal error during closing GRPC connection.")
+	}
+	if err := DB.Close(); err != nil {
+		logger.Fatal().Err(err).Msg("Fatal error during parse env file.")
+	}
+	if err := rdb.Close(); err != nil {
+		logger.Fatal().Err(err).Msg("Fatal error during parse env file.")
+	}
 }
