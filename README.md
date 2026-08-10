@@ -1,4 +1,4 @@
-# FantasticTelegram – Blog Platform with Microservices Architecture
+FantasticTelegram – Blog Platform with Microservices Architecture
 FantasticTelegram is a production-ready blog platform with authentication, post management, and async notifications.  
 It implements the **Outbox Pattern** for eventual consistency, gRPC inter-service communication, Redis caching, and Kafka-based event processing.  
 Built with Go best practices – Clean Architecture, fully tested, and containerized.
@@ -72,7 +72,7 @@ go test ./services/user/test/... -count=1
 ```
 ## Architecture Overview
 ```
-  Telegram Bot ──▶ User Service ──▶ Post Service ──▶ Kafka Topic ──▶ Notification Service
+  User ──▶ User Service ──▶ Post Service ──▶ Kafka Topic ──▶ Notification Service
                        │                    │                      │
                        ▼                    ▼                      ▼
                   PostgreSQL          Redis Cache            Outbox Table
