@@ -6,37 +6,12 @@ import (
 	"github.com/disdreamq/fantastic-telegram/services/post/internal/domain"
 )
 
-type PostCreater interface {
-	Create(ctx context.Context, post *domain.Post) (*domain.Post, error)
-}
-type PostReaderByID interface {
-	GetByID(ctx context.Context, ID int64) (*domain.Post, error)
-}
-type PostReaderByTitle interface {
-	GetByTitle(ctx context.Context, title string) (*domain.Post, error)
-}
-
-type PostUpdater interface {
-	Update(ctx context.Context, post *domain.Post) error
-}
-
-type PostUpdaterWithValidation interface {
-	UpdateWithValidate(ctx context.Context, currUserID int64, post *domain.Post) error
-}
-
-type PostDeleter interface {
-	Delete(ctx context.Context, ID int64) (string, error)
-}
-type PostDeleterWithValidate interface {
-	DeleteWithValidate(ctx context.Context, currUserID, ID int64) (string, error)
-}
-
 type PostRepository interface {
-	PostReaderByID
-	PostReaderByTitle
-	PostCreater
-	PostUpdater
-	PostDeleter
-	PostUpdaterWithValidation
-	PostDeleterWithValidate
+	Create(ctx context.Context, post *domain.Post) (*domain.Post, error)
+	GetByID(ctx context.Context, id int64) (*domain.Post, error)
+	GetByTitle(ctx context.Context, title string) (*domain.Post, error)
+	Update(ctx context.Context, post *domain.Post) error
+	UpdateWithValidate(ctx context.Context, currUserID int64, post *domain.Post) error
+	Delete(ctx context.Context, id int64) (string, error)
+	DeleteWithValidate(ctx context.Context, currUserID, id int64) (string, error)
 }
