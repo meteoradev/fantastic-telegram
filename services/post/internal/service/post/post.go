@@ -10,7 +10,6 @@ import (
 	"github.com/disdreamq/fantastic-telegram/services/post/internal/domain"
 	"github.com/disdreamq/fantastic-telegram/services/post/internal/port"
 	"github.com/disdreamq/fantastic-telegram/services/post/internal/service"
-	"github.com/rs/zerolog/log"
 )
 
 type PostService struct {
@@ -23,84 +22,46 @@ func NewPostService(postRepo port.PostRepository, cache port.Cache) *PostService
 }
 
 func (p *PostService) Create(ctx context.Context, userID int64, title, content string) (*domain.Post, error) {
-	logger := log.Ctx(ctx)
-	trace_id, _ := ctx.Value("trace_id").(string)
-
 	domainPost, err := domain.NewPost(userID, title, content)
 	if err != nil {
-		logger.Error().
-			Err(err).
-			Str("trace_id", trace_id).
-			Int64("user_id", userID).
-			Str("title", title).
-			Msg("Create post error in post service.")
+		service.LogError(ctx, "Create post error in domain validation", "user_id", userID, "title", title, "error", err)
 		return nil, err
 	}
 	post, err := p.postRepo.Create(ctx, domainPost)
 	if err != nil {
-		logger.Error().
-			Err(err).
-			Str("trace_id", trace_id).
-			Int64("user_id", userID).
-			Str("title", title).
-			Msg("Create post error in post service.")
+		service.LogError(ctx, "Create post error in repository", "user_id", userID, "title", title, "error", err)
 		return nil, service.ErrLinkedUserNotFound
 	}
 	data, err := json.Marshal(post)
 	if err != nil {
-		logger.Error().
-			Err(err).
-			Str("trace_id", trace_id).
-			Int64("user_id", userID).
-			Str("title", title).
-			Msg("Create post error in post service.")
+		service.LogError(ctx, "JSON marshal error in Create", "user_id", userID, "error", err)
 		return nil, err
 	}
 	p.cache.Set(ctx, "post_"+strconv.FormatInt(post.ID, 10), data, 10*time.Minute)
 
-	logger.Info().
-		Str("trace_id", trace_id).
-		Int64("user_id", userID).
-		Str("title", title).
-		Msg("Created post")
+	service.LogInfo(ctx, "Created post", "user_id", userID, "title", title)
 	return post, nil
 }
 
 func (p *PostService) GetByID(ctx context.Context, postID int64) (*domain.Post, error) {
-	logger := log.Ctx(ctx)
-	trace_id, _ := ctx.Value("trace_id").(string)
-
 	cachedPost, ok := p.cache.Get(ctx, "post_"+strconv.FormatInt(postID, 10))
 	if !ok {
 		post, err := p.postRepo.GetByID(ctx, postID)
 		if err != nil {
 			switch err {
 			case sql.ErrNoRows:
-				logger.Debug().
-					Err(err).
-					Str("trace_id", trace_id).
-					Int64("post ID", postID).
-					Msg("Read post by ID error in post service.")
+				service.LogDebug(ctx, "Post not found in DB", "post_id", postID, "error", err)
 				return nil, service.ErrPostNotFound
 			default:
-				logger.Error().
-					Err(err).
-					Str("trace_id", trace_id).
-					Int64("post ID", postID).
-					Msg("Read post by ID error in post service.")
+				service.LogError(ctx, "Read post by ID error", "post_id", postID, "error", err)
 				return nil, service.ErrUnexpected
 			}
 		}
 		data, err := json.Marshal(post)
 		if err != nil {
-			logger.Error().
-				Err(err).
-				Str("trace_id", trace_id).
-				Int64("post ID", postID).
-				Msg("Read post by ID error in post service.")
+			service.LogError(ctx, "JSON marshal error in GetByID", "post_id", postID, "error", err)
 			return nil, err
 		}
-
 		p.cache.Set(ctx, "post_"+strconv.FormatInt(postID, 10), data, 10*time.Minute)
 		return post, nil
 	}
@@ -108,101 +69,58 @@ func (p *PostService) GetByID(ctx context.Context, postID int64) (*domain.Post, 
 	var post domain.Post
 	err := json.Unmarshal([]byte(cachedPost), &post)
 	if err != nil {
-		logger.Error().
-			Err(err).
-			Str("trace_id", trace_id).
-			Int64("post ID", postID).
-			Msg("Read post by ID error in post service.")
+		service.LogError(ctx, "Cache unmarshal error in GetByID", "post_id", postID, "error", err)
 		return nil, service.ErrCacheUnmarshal
 	}
 
-	logger.Debug().
-		Str("trace_id", trace_id).
-		Int64("post_id", postID).
-		Msg("Read post")
+	service.LogDebug(ctx, "Read post from cache", "post_id", postID)
 	return &post, nil
 }
 
 func (p *PostService) GetByTitle(ctx context.Context, title string) (*domain.Post, error) {
-	logger := log.Ctx(ctx)
-	trace_id, _ := ctx.Value("trace_id").(string)
-
 	cachedPost, ok := p.cache.Get(ctx, "post_"+title)
 	if !ok {
 		post, err := p.postRepo.GetByTitle(ctx, title)
 		if err != nil {
 			switch err {
 			case sql.ErrNoRows:
-				logger.Debug().
-					Err(err).
-					Str("trace_id", trace_id).
-					Str("title", title).
-					Msg("Read post by title error in post service.")
+				service.LogDebug(ctx, "Post not found by title", "title", title, "error", err)
 				return nil, service.ErrPostNotFound
 			default:
-				logger.Error().
-					Err(err).
-					Str("trace_id", trace_id).
-					Str("title", title).
-					Msg("Read post by title error in post service.")
+				service.LogError(ctx, "Read post by title error", "title", title, "error", err)
 				return nil, service.ErrUnexpected
 			}
 		}
 		data, err := json.Marshal(post)
 		if err != nil {
-			logger.Error().
-				Err(err).
-				Str("trace_id", trace_id).
-				Str("title", title).
-				Msg("Read post by title error in post service.")
+			service.LogError(ctx, "JSON marshal error in GetByTitle", "title", title, "error", err)
 			return nil, err
 		}
-
 		p.cache.Set(ctx, "post_"+title, data, 10*time.Minute)
 		return post, nil
-
 	}
 
 	var post domain.Post
 	err := json.Unmarshal([]byte(cachedPost), &post)
 	if err != nil {
-		logger.Error().
-			Err(err).
-			Str("trace_id", trace_id).
-			Str("title", title).
-			Msg("Read post by title error in post service.")
+		service.LogError(ctx, "Cache unmarshal error in GetByTitle", "title", title, "error", err)
 		return nil, service.ErrCacheUnmarshal
 	}
 
-	logger.Debug().
-		Str("trace_id", trace_id).
-		Str("title", title).
-		Msg("Read post")
+	service.LogDebug(ctx, "Read post by title from cache", "title", title)
 	return &post, nil
-
 }
 
 func (p *PostService) UpdateWithValidate(ctx context.Context, currUserID, postID int64, title, content string) error {
-	logger := log.Ctx(ctx)
-	trace_id, _ := ctx.Value("trace_id").(string)
-
 	post, err := domain.NewPost(currUserID, title, content)
-	post.ID = postID
 	if err != nil {
-		logger.Error().
-			Err(err).
-			Str("trace_id", trace_id).
-			Int64("post ID", postID).
-			Msg("Update post with validate error in post service.")
+		service.LogError(ctx, "Update post with validate domain error", "post_id", postID, "error", err)
 		return err
 	}
+	post.ID = postID
 	err = p.postRepo.UpdateWithValidate(ctx, currUserID, post)
 	if err != nil {
-		logger.Error().
-			Err(err).
-			Str("trace_id", trace_id).
-			Int64("post ID", postID).
-			Msg("Update post with validate error in post service.")
+		service.LogError(ctx, "Update post with validate repository error", "post_id", postID, "error", err)
 		switch err {
 		case sql.ErrNoRows:
 			return service.ErrUpdatePostFailed
@@ -211,37 +129,22 @@ func (p *PostService) UpdateWithValidate(ctx context.Context, currUserID, postID
 		}
 	}
 
-	logger.Debug().
-		Str("trace_id", trace_id).
-		Int64("post_id", postID).
-		Msg("Updated post")
 	p.cache.Del(ctx, "post_"+strconv.FormatInt(postID, 10))
 	p.cache.Del(ctx, "post_"+title)
+	service.LogDebug(ctx, "Updated post", "post_id", postID)
 	return nil
-
 }
 
 func (p *PostService) Update(ctx context.Context, postID int64, title, content string) error {
-	logger := log.Ctx(ctx)
-	trace_id, _ := ctx.Value("trace_id").(string)
-
 	post, err := domain.NewPost(0, title, content)
-	post.ID = postID
 	if err != nil {
-		logger.Error().
-			Err(err).
-			Str("trace_id", trace_id).
-			Int64("post ID", postID).
-			Msg("Update post error in post service.")
+		service.LogError(ctx, "Update post domain error", "post_id", postID, "error", err)
 		return err
 	}
+	post.ID = postID
 	err = p.postRepo.Update(ctx, post)
 	if err != nil {
-		logger.Error().
-			Err(err).
-			Str("trace_id", trace_id).
-			Int64("post ID", postID).
-			Msg("Update post error in post service.")
+		service.LogError(ctx, "Update post repository error", "post_id", postID, "error", err)
 		switch err {
 		case sql.ErrNoRows:
 			return service.ErrPostNotFound
@@ -250,26 +153,16 @@ func (p *PostService) Update(ctx context.Context, postID int64, title, content s
 		}
 	}
 
-	logger.Debug().
-		Str("trace_id", trace_id).
-		Int64("post_id", postID).
-		Msg("Updated post")
 	p.cache.Del(ctx, "post_"+strconv.FormatInt(postID, 10))
 	p.cache.Del(ctx, "post_"+title)
+	service.LogDebug(ctx, "Updated post", "post_id", postID)
 	return nil
 }
 
 func (p *PostService) Delete(ctx context.Context, postID int64) error {
-	logger := log.Ctx(ctx)
-	trace_id, _ := ctx.Value("trace_id").(string)
-
 	title, err := p.postRepo.Delete(ctx, postID)
 	if err != nil {
-		logger.Error().
-			Err(err).
-			Str("trace_id", trace_id).
-			Int64("post ID", postID).
-			Msg("Delete post error in post service.")
+		service.LogError(ctx, "Delete post repository error", "post_id", postID, "error", err)
 		switch err {
 		case sql.ErrNoRows:
 			return service.ErrPostNotFound
@@ -278,26 +171,16 @@ func (p *PostService) Delete(ctx context.Context, postID int64) error {
 		}
 	}
 
-	logger.Debug().
-		Str("trace_id", trace_id).
-		Int64("post_id", postID).
-		Msg("Deleted post")
 	p.cache.Del(ctx, "post_"+strconv.FormatInt(postID, 10))
 	p.cache.Del(ctx, "post_"+title)
+	service.LogDebug(ctx, "Deleted post", "post_id", postID)
 	return nil
 }
 
 func (p *PostService) DeleteWithValidate(ctx context.Context, currUserID, postID int64) error {
-	logger := log.Ctx(ctx)
-	trace_id, _ := ctx.Value("trace_id").(string)
-
 	title, err := p.postRepo.DeleteWithValidate(ctx, currUserID, postID)
 	if err != nil {
-		logger.Error().
-			Err(err).
-			Str("trace_id", trace_id).
-			Int64("post ID", postID).
-			Msg("Delete post with validate error in post service.")
+		service.LogError(ctx, "Delete post with validate repository error", "post_id", postID, "error", err)
 		switch err {
 		case sql.ErrNoRows:
 			return service.ErrDeletePostFailed
@@ -306,11 +189,8 @@ func (p *PostService) DeleteWithValidate(ctx context.Context, currUserID, postID
 		}
 	}
 
-	logger.Debug().
-		Str("trace_id", trace_id).
-		Int64("post_id", postID).
-		Msg("Deleted post")
 	p.cache.Del(ctx, "post_"+strconv.FormatInt(postID, 10))
 	p.cache.Del(ctx, "post_"+title)
+	service.LogDebug(ctx, "Deleted post with validate", "post_id", postID)
 	return nil
 }
