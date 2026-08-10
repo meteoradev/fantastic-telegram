@@ -36,6 +36,13 @@ type userResponse struct {
 	CreatedAt time.Time `json:"created_at"`
 }
 
+// writeError writes a structured JSON error response with the given status code.
+func writeError(w http.ResponseWriter, message string, statusCode int) {
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(statusCode)
+	json.NewEncoder(w).Encode(ErrorResponse{Error: message})
+}
+
 func NewUserResponse(u *domain.User) *userResponse {
 	return &userResponse{
 		ID:        u.ID,
@@ -188,7 +195,7 @@ func (c *UserController) Update(w http.ResponseWriter, r *http.Request) {
 	}
 	val := r.Context().Value("userID")
 	if val == nil {
-		http.Error(w, `{"error": "unauthorized"}`, http.StatusUnauthorized)
+		writeError(w, "unauthorized", http.StatusUnauthorized)
 		return
 	}
 	var currUserID int64
@@ -198,20 +205,20 @@ func (c *UserController) Update(w http.ResponseWriter, r *http.Request) {
 	case int64:
 		currUserID = v
 	default:
-		http.Error(w, `{"error": "invalid user ID type"}`, http.StatusInternalServerError)
+		writeError(w, "invalid user ID type", http.StatusInternalServerError)
 		return
 	}
 	err = c.userService.Update(r.Context(), currUserID, userID, userReq.Username, userReq.Email, userReq.Password)
 	if err != nil {
 		switch err {
 		case service.ErrUserNotFound:
-			http.Error(w, `{"error": "user not found"}`, http.StatusNotFound)
+			writeError(w, "user not found", http.StatusNotFound)
 			return
 		case service.ErrMethodNotAllowed:
-			http.Error(w, `{"error": "failed to update user"}`, http.StatusMethodNotAllowed)
+			writeError(w, "failed to update user", http.StatusMethodNotAllowed)
 			return
 		default:
-			http.Error(w, `{"error": "failed to get user"}`, http.StatusBadRequest)
+			writeError(w, "failed to update user", http.StatusBadRequest)
 			return
 		}
 	}
@@ -238,10 +245,14 @@ func (c *UserController) Delete(w http.ResponseWriter, r *http.Request) {
 	defer r.Body.Close()
 	userID, err := strconv.ParseInt(chi.URLParam(r, "userID"), 10, 64)
 	if err != nil {
-		http.Error(w, `{"error": "invalid user ID"}`, http.StatusBadRequest)
+		writeError(w, "invalid user ID", http.StatusBadRequest)
 		return
 	}
 	val := r.Context().Value("userID")
+	if val == nil {
+		writeError(w, "invalid user ID type", http.StatusInternalServerError)
+		return
+	}
 	var currUserID int64
 	switch v := val.(type) {
 	case int:
@@ -249,20 +260,20 @@ func (c *UserController) Delete(w http.ResponseWriter, r *http.Request) {
 	case int64:
 		currUserID = v
 	default:
-		http.Error(w, `{"error": "invalid user ID type"}`, http.StatusInternalServerError)
+		writeError(w, "invalid user ID type", http.StatusInternalServerError)
 		return
 	}
 	err = c.userService.Delete(r.Context(), currUserID, userID)
 	if err != nil {
 		switch err {
 		case service.ErrUserNotFound:
-			http.Error(w, `{"error": "user not found"}`, http.StatusNotFound)
+			writeError(w, "user not found", http.StatusNotFound)
 			return
 		case service.ErrMethodNotAllowed:
-			http.Error(w, `{"error": "failed to delete user"}`, http.StatusMethodNotAllowed)
+			writeError(w, "failed to delete user", http.StatusMethodNotAllowed)
 			return
 		default:
-			http.Error(w, `{"error": "failed to get user"}`, http.StatusBadRequest)
+			writeError(w, "failed to delete user", http.StatusBadRequest)
 			return
 		}
 	}
