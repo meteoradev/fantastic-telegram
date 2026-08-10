@@ -141,6 +141,13 @@ func main() {
 		httpSwagger.URL("http://localhost:8080/swagger/doc.json"),
 	))
 
+	// Health check
+	r.Get("/health", func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(http.StatusOK)
+		w.Write([]byte(`{"status":"ok"}`))
+	})
+
 	httpSrv := &http.Server{
 		Addr:    ":" + strconv.FormatInt(int64(cfg.HttpPort), 10),
 		Handler: r,
