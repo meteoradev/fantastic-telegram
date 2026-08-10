@@ -98,6 +98,13 @@ func main() {
 		httpSwagger.URL("http://localhost:"+strconv.FormatInt(int64(cfg.HTTPPort), 10)+"/swagger/doc.json"),
 	))
 
+	// Health check
+	r.Get("/health", func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(http.StatusOK)
+		w.Write([]byte(`{"status":"ok"}`))
+	})
+
 	// Start server
 	srv := &http.Server{
 		Addr:    ":" + strconv.FormatInt(int64(cfg.HTTPPort), 10),
