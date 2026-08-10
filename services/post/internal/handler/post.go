@@ -53,6 +53,13 @@ func newPostResponse(p *domain.Post) *postResponse {
 	return &postResponse{ID: p.ID, UserID: p.UserID, Title: p.Title, Content: p.Content, CreatedAt: p.CreatedAt}
 }
 
+// writeError writes a structured JSON error response with the given status code.
+func writeError(w http.ResponseWriter, message string, statusCode int) {
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(statusCode)
+	json.NewEncoder(w).Encode(ErrorResponse{Error: message})
+}
+
 func NewPostController(postService port.PostService) *PostController {
 	return &PostController{postService: postService}
 
@@ -76,27 +83,39 @@ func (c *PostController) Create(w http.ResponseWriter, r *http.Request) {
 	defer r.Body.Close()
 	var postReq createPostRequest
 	if err := json.NewDecoder(r.Body).Decode(&postReq); err != nil {
-		http.Error(w, `{"error": "invalid JSON"}`, http.StatusBadRequest)
+		writeError(w, "invalid JSON", http.StatusBadRequest)
 		return
 	}
-	UserID, _ := r.Context().Value("userID").(int64)
-	post, err := c.postService.Create(r.Context(), UserID, postReq.Title, postReq.Content)
+	if postReq.Title == "" {
+		writeError(w, "title must contain at least 1 character", http.StatusBadRequest)
+		return
+	}
+	if postReq.Content == "" {
+		writeError(w, "content must contain at least 1 character", http.StatusBadRequest)
+		return
+	}
+	userID, ok := r.Context().Value("userID").(int64)
+	if !ok {
+		writeError(w, "unauthorized", http.StatusUnauthorized)
+		return
+	}
+	post, err := c.postService.Create(r.Context(), userID, postReq.Title, postReq.Content)
 	if err != nil {
 		switch err {
 		case service.ErrUnexpected:
-			http.Error(w, `{"error": "failed to create post"}`, http.StatusInternalServerError)
+			writeError(w, "failed to create post", http.StatusInternalServerError)
 			return
 		case service.ErrLinkedUserNotFound:
-			http.Error(w, `{"error": "linked user with this id doesnt exists."}`, http.StatusConflict)
+			writeError(w, "linked user with this id doesnt exists.", http.StatusConflict)
 			return
 		case domain.ErrInvalidTitle:
-			http.Error(w, `{"error": "title must contain at least 1 character"}`, http.StatusBadRequest)
+			writeError(w, "title must contain at least 1 character", http.StatusBadRequest)
 			return
 		case domain.ErrInvalidContent:
-			http.Error(w, `{"error": "content must contain at least 1 character"}`, http.StatusBadRequest)
+			writeError(w, "content must contain at least 1 character", http.StatusBadRequest)
 			return
 		default:
-			http.Error(w, `{"error": "failed to create post"}`, http.StatusBadRequest)
+			writeError(w, "failed to create post", http.StatusInternalServerError)
 			return
 		}
 	}
@@ -121,17 +140,17 @@ func (c *PostController) GetByID(w http.ResponseWriter, r *http.Request) {
 	defer r.Body.Close()
 	postID, err := strconv.ParseInt(chi.URLParam(r, "postID"), 10, 64)
 	if err != nil {
-		http.Error(w, `{"error": "invalid post ID"}`, http.StatusBadRequest)
+		writeError(w, "invalid post ID", http.StatusBadRequest)
 		return
 	}
 	post, err := c.postService.GetByID(r.Context(), postID)
 	if err != nil {
 		switch err {
 		case service.ErrPostNotFound:
-			http.Error(w, `{"error": "post not found"}`, http.StatusNotFound)
+			writeError(w, "post not found", http.StatusNotFound)
 			return
 		default:
-			http.Error(w, `{"error": "failed to get post"}`, http.StatusBadRequest)
+			writeError(w, "failed to get post", http.StatusInternalServerError)
 			return
 		}
 	}
@@ -156,21 +175,21 @@ func (c *PostController) GetByTitle(w http.ResponseWriter, r *http.Request) {
 	title := chi.URLParam(r, "title")
 	decodedTitle, err := url.QueryUnescape(title)
 	if err != nil {
-		http.Error(w, `{"error": "invalid title encoding"}`, http.StatusBadRequest)
+		writeError(w, "invalid title encoding", http.StatusBadRequest)
 		return
 	}
-	if title == "" {
-		http.Error(w, `{"error": "invalid post title"}`, http.StatusBadRequest)
+	if decodedTitle == "" {
+		writeError(w, "invalid post title", http.StatusBadRequest)
 		return
 	}
 	post, err := c.postService.GetByTitle(r.Context(), decodedTitle)
 	if err != nil {
 		switch err {
 		case service.ErrPostNotFound:
-			http.Error(w, `{"error": "post not found"}`, http.StatusNotFound)
+			writeError(w, "post not found", http.StatusNotFound)
 			return
 		default:
-			http.Error(w, `{"error": "failed to get post"}`, http.StatusBadRequest)
+			writeError(w, "failed to get post", http.StatusInternalServerError)
 			return
 		}
 	}
@@ -198,22 +217,22 @@ func (c *PostController) Update(w http.ResponseWriter, r *http.Request) {
 	defer r.Body.Close()
 	var postReq updatePostRequest
 	if err := json.NewDecoder(r.Body).Decode(&postReq); err != nil {
-		http.Error(w, `{"error": "invalid JSON"}`, http.StatusBadRequest)
+		writeError(w, "invalid JSON", http.StatusBadRequest)
 		return
 	}
-	currUserID, err := strconv.ParseInt(r.Context().Value("userID").(string), 10, 64)
-	if err != nil {
-		http.Error(w, `{"error": "invalid user ID"}`, http.StatusBadRequest)
+	currUserID, ok := r.Context().Value("userID").(int64)
+	if !ok {
+		writeError(w, "invalid user ID", http.StatusBadRequest)
 		return
 	}
-	err = c.postService.UpdateWithValidate(r.Context(), currUserID, postReq.ID, postReq.Title, postReq.Content)
+	err := c.postService.UpdateWithValidate(r.Context(), currUserID, postReq.ID, postReq.Title, postReq.Content)
 	if err != nil {
 		switch err {
 		case service.ErrPostNotFound:
-			http.Error(w, `{"error": "post not found"}`, http.StatusNotFound)
+			writeError(w, "post not found", http.StatusNotFound)
 			return
 		default:
-			http.Error(w, `{"error": "failed to get post"}`, http.StatusBadRequest)
+			writeError(w, "failed to update post", http.StatusInternalServerError)
 			return
 		}
 	}
@@ -239,13 +258,13 @@ func (c *PostController) Delete(w http.ResponseWriter, r *http.Request) {
 	defer r.Body.Close()
 	postID, err := strconv.ParseInt(chi.URLParam(r, "postID"), 10, 64)
 	if err != nil {
-		http.Error(w, `{"error": "invalid post ID"}`, http.StatusBadRequest)
+		writeError(w, "invalid post ID", http.StatusBadRequest)
 		return
 	}
 
 	currUserID, ok := r.Context().Value("userID").(int64)
 	if !ok {
-		http.Error(w, `{"error": "invalid user ID"}`, http.StatusBadRequest)
+		writeError(w, "invalid user ID", http.StatusBadRequest)
 		return
 	}
 
@@ -253,10 +272,10 @@ func (c *PostController) Delete(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		switch err {
 		case service.ErrPostNotFound:
-			http.Error(w, `{"error": "post not found"}`, http.StatusNotFound)
+			writeError(w, "post not found", http.StatusNotFound)
 			return
 		default:
-			http.Error(w, `{"error": "failed to get post"}`, http.StatusBadRequest)
+			writeError(w, "failed to delete post", http.StatusInternalServerError)
 			return
 		}
 	}
