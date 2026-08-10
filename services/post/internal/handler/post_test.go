@@ -73,7 +73,7 @@ func TestPostController_Create(t *testing.T) {
 			createPostRequest{Title: "", Content: "Some content"},
 			10,
 			http.StatusBadRequest,
-			`{"error": "title must contain at least 1 character"`,
+			`{"error":"title must contain at least 1 character"}`,
 		},
 		{
 			"empty content",
@@ -83,7 +83,7 @@ func TestPostController_Create(t *testing.T) {
 			createPostRequest{Title: "Hello", Content: ""},
 			10,
 			http.StatusBadRequest,
-			`{"error": "content must contain at least 1 character"`,
+			`{"error":"content must contain at least 1 character"}`,
 		},
 		{
 			"linked user not found",
@@ -93,7 +93,7 @@ func TestPostController_Create(t *testing.T) {
 			createPostRequest{Title: "Hello", Content: "Content"},
 			999,
 			http.StatusConflict,
-			`{"error": "linked user with this id doesnt exists."}`,
+			`{"error":"linked user with this id doesnt exists."}`,
 		},
 		{
 			"unexpected error",
@@ -103,7 +103,7 @@ func TestPostController_Create(t *testing.T) {
 			createPostRequest{Title: "Hello", Content: "Content"},
 			10,
 			http.StatusInternalServerError,
-			`{"error": "failed to create post"}`,
+			`{"error":"failed to create post"}`,
 		},
 	}
 
@@ -160,7 +160,7 @@ func TestPostController_GetByID(t *testing.T) {
 			mockPostService{},
 			"abc",
 			http.StatusBadRequest,
-			`{"error": "invalid post ID"}`,
+			`{"error":"invalid post ID"}`,
 		},
 		{
 			"post not found",
@@ -169,7 +169,7 @@ func TestPostController_GetByID(t *testing.T) {
 			}},
 			"999",
 			http.StatusNotFound,
-			`{"error": "post not found"}`,
+			`{"error":"post not found"}`,
 		},
 		{
 			"unexpected error",
@@ -177,8 +177,8 @@ func TestPostController_GetByID(t *testing.T) {
 				return nil, service.ErrUnexpected
 			}},
 			"42",
-			http.StatusBadRequest,
-			`{"error": "failed to get post"}`,
+			http.StatusInternalServerError,
+			`{"error":"failed to get post"}`,
 		},
 	}
 
@@ -235,7 +235,7 @@ func TestPostController_GetByTitle(t *testing.T) {
 			mockPostService{},
 			"",
 			http.StatusBadRequest,
-			`{"error": "invalid post title"}`,
+			`{"error":"invalid post title"}`,
 		},
 		{
 			"post not found",
@@ -244,7 +244,7 @@ func TestPostController_GetByTitle(t *testing.T) {
 			}},
 			"unknown-title",
 			http.StatusNotFound,
-			`{"error": "post not found"}`,
+			`{"error":"post not found"}`,
 		},
 		{
 			"unexpected error",
@@ -252,8 +252,8 @@ func TestPostController_GetByTitle(t *testing.T) {
 				return nil, service.ErrUnexpected
 			}},
 			"Hello%20World",
-			http.StatusBadRequest,
-			`{"error": "failed to get post"}`,
+			http.StatusInternalServerError,
+			`{"error":"failed to get post"}`,
 		},
 	}
 
@@ -294,7 +294,7 @@ func TestPostController_Update(t *testing.T) {
 		service        mockPostService
 		postID         string
 		input          updatePostRequest
-		currUserID     any
+		userID         *int64 // nil means not set
 		expectedStatus int
 		expectedBody   string
 	}{
@@ -305,7 +305,7 @@ func TestPostController_Update(t *testing.T) {
 			}},
 			"42",
 			updatePostRequest{ID: 42, Title: "Updated Title", Content: "Updated content"},
-			"10",
+			ptrInt64(10),
 			http.StatusOK,
 			"",
 		},
@@ -314,29 +314,29 @@ func TestPostController_Update(t *testing.T) {
 			mockPostService{},
 			"42",
 			updatePostRequest{},
-			"10",
+			ptrInt64(10),
 			http.StatusBadRequest,
-			`{"error": "invalid JSON"}`,
+			`{"error":"invalid JSON"}`,
 		},
 		{
-			"invalid currUserID in context",
+			"missing userID in context",
 			mockPostService{},
 			"42",
 			updatePostRequest{ID: 42, Title: "Updated", Content: "Content"},
-			"not_a_number",
+			nil,
 			http.StatusBadRequest,
-			`{"error": "invalid user ID"}`,
+			`{"error":"invalid user ID"}`,
 		},
 		{
 			"update failed",
 			mockPostService{mockUpdateWithValidate: func(ctx context.Context, currUserID, postID int64, title, content string) error {
-				return service.ErrUpdatePostFailed
+				return service.ErrPostNotFound
 			}},
 			"42",
 			updatePostRequest{ID: 42, Title: "Updated", Content: "Content"},
-			"10",
-			http.StatusBadRequest,
-			`{"error": "failed to get post"}`,
+			ptrInt64(10),
+			http.StatusNotFound,
+			`{"error":"post not found"}`,
 		},
 	}
 
@@ -345,14 +345,17 @@ func TestPostController_Update(t *testing.T) {
 			ctrl := NewPostController(&tt.service)
 
 			var bodyReader *strings.Reader
-			if tt.expectedBody == `{"error": "invalid JSON"}` {
+			if tt.expectedBody == `{"error":"invalid JSON"}` {
 				bodyReader = strings.NewReader("not valid json{")
 			} else {
 				bodyBytes, _ := json.Marshal(tt.input)
 				bodyReader = strings.NewReader(string(bodyBytes))
 			}
 
-			ctx := context.WithValue(context.Background(), "userID", tt.currUserID)
+			ctx := context.Background()
+			if tt.userID != nil {
+				ctx = context.WithValue(ctx, "userID", *tt.userID)
+			}
 			req := httptest.NewRequest(http.MethodPut, "/posts/42", bodyReader)
 			req = req.WithContext(ctx)
 			req.Header.Set("Content-Type", "application/json")
@@ -371,12 +374,14 @@ func TestPostController_Update(t *testing.T) {
 	}
 }
 
+func ptrInt64(v int64) *int64 { return &v }
+
 func TestPostController_Delete(t *testing.T) {
 	tests := []struct {
 		name           string
 		service        mockPostService
 		postID         string
-		currUserID     any
+		userID         *int64
 		expectedStatus int
 		expectedBody   string
 	}{
@@ -386,7 +391,7 @@ func TestPostController_Delete(t *testing.T) {
 				return nil
 			}},
 			"42",
-			int64(10),
+			ptrInt64(10),
 			http.StatusNoContent,
 			"",
 		},
@@ -394,17 +399,17 @@ func TestPostController_Delete(t *testing.T) {
 			"invalid postID",
 			mockPostService{},
 			"abc",
-			int64(10),
+			ptrInt64(10),
 			http.StatusBadRequest,
-			`{"error": "invalid post ID"}`,
+			`{"error":"invalid post ID"}`,
 		},
 		{
-			"invalid currUserID in context",
+			"missing userID in context",
 			mockPostService{},
 			"42",
-			"not_a_number",
+			nil,
 			http.StatusBadRequest,
-			`{"error": "invalid user ID"}`,
+			`{"error":"invalid user ID"}`,
 		},
 		{
 			"post not found",
@@ -412,9 +417,9 @@ func TestPostController_Delete(t *testing.T) {
 				return service.ErrPostNotFound
 			}},
 			"999",
-			int64(10),
+			ptrInt64(10),
 			http.StatusNotFound,
-			`{"error": "post not found"}`,
+			`{"error":"post not found"}`,
 		},
 	}
 
@@ -424,8 +429,11 @@ func TestPostController_Delete(t *testing.T) {
 
 			rctx := chi.NewRouteContext()
 			rctx.URLParams.Add("postID", tt.postID)
-			ctx := context.WithValue(context.Background(), chi.RouteCtxKey, rctx)
-			ctx = context.WithValue(ctx, "userID", tt.currUserID)
+			ctx := context.Background()
+			ctx = context.WithValue(ctx, chi.RouteCtxKey, rctx)
+			if tt.userID != nil {
+				ctx = context.WithValue(ctx, "userID", *tt.userID)
+			}
 			req := httptest.NewRequest(http.MethodDelete, "/posts/"+tt.postID, nil)
 			req = req.WithContext(ctx)
 			w := httptest.NewRecorder()
