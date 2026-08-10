@@ -46,7 +46,7 @@ func (r *PostRepository) Create(ctx context.Context, post *domain.Post) (*domain
 	}
 	defer tx.Rollback()
 
-	txCtx, cancel := context.WithTimeout(ctx, 2*time.Second)
+	txCtx, cancel := context.WithTimeout(ctx, 5*time.Second)
 	defer cancel()
 
 	query := `
@@ -60,7 +60,7 @@ func (r *PostRepository) Create(ctx context.Context, post *domain.Post) (*domain
 		return nil, err
 	}
 
-	// Step away from clean architecture, but i dont want to change whole service for 6 lines
+	// Write outbox event for async notification
 	traceID, _ := ctx.Value("trace_id").(string)
 	payload := domain.NewOutboxPayload(dbPost.toDomain(), traceID)
 	p, err := json.Marshal(payload)
@@ -81,7 +81,7 @@ func (r *PostRepository) Create(ctx context.Context, post *domain.Post) (*domain
 }
 
 func (r *PostRepository) GetByID(ctx context.Context, postID int64) (*domain.Post, error) {
-	txCtx, cancel := context.WithTimeout(ctx, 2*time.Second)
+	txCtx, cancel := context.WithTimeout(ctx, 5*time.Second)
 	defer cancel()
 
 	query := `
@@ -97,7 +97,7 @@ func (r *PostRepository) GetByID(ctx context.Context, postID int64) (*domain.Pos
 }
 
 func (r *PostRepository) GetByTitle(ctx context.Context, title string) (*domain.Post, error) {
-	txCtx, cancel := context.WithTimeout(ctx, 2*time.Second)
+	txCtx, cancel := context.WithTimeout(ctx, 5*time.Second)
 	defer cancel()
 
 	query := `
@@ -113,7 +113,7 @@ func (r *PostRepository) GetByTitle(ctx context.Context, title string) (*domain.
 }
 
 func (r *PostRepository) ReadAllUserPosts(ctx context.Context, userID int64) ([]*domain.Post, error) {
-	txCtx, cancel := context.WithTimeout(ctx, 2*time.Second)
+	txCtx, cancel := context.WithTimeout(ctx, 5*time.Second)
 	defer cancel()
 
 	query := `
@@ -139,7 +139,7 @@ func (r *PostRepository) Update(ctx context.Context, post *domain.Post) error {
 	}
 	defer tx.Rollback()
 
-	txCtx, cancel := context.WithTimeout(ctx, 2*time.Second)
+	txCtx, cancel := context.WithTimeout(ctx, 5*time.Second)
 	defer cancel()
 
 	query := `
@@ -170,7 +170,7 @@ func (r *PostRepository) UpdateWithValidate(ctx context.Context, currUserID int6
 		return err
 	}
 	defer tx.Rollback()
-	txCtx, cancel := context.WithTimeout(ctx, 2*time.Second)
+	txCtx, cancel := context.WithTimeout(ctx, 5*time.Second)
 	defer cancel()
 
 	query := `UPDATE posts SET title = $1, content = $2
@@ -200,7 +200,7 @@ func (r *PostRepository) Delete(ctx context.Context, postID int64) (string, erro
 	}
 	defer tx.Rollback()
 
-	txCtx, cancel := context.WithTimeout(ctx, 2*time.Second)
+	txCtx, cancel := context.WithTimeout(ctx, 5*time.Second)
 	defer cancel()
 
 	query := `DELETE FROM posts WHERE id = $1 RETURNING title`
@@ -225,7 +225,7 @@ func (r *PostRepository) DeleteWithValidate(ctx context.Context, currUserID, ID 
 	}
 	defer tx.Rollback()
 
-	txCtx, cancel := context.WithTimeout(ctx, 2*time.Second)
+	txCtx, cancel := context.WithTimeout(ctx, 5*time.Second)
 	defer cancel()
 
 	query := `DELETE FROM posts WHERE id = $1 AND user_id = $2 RETURNING title`
