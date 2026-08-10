@@ -29,6 +29,6 @@ func RunMigrations(dsn string) error {
 
 func getMigrationsPath() string {
 	_, filename, _, _ := runtime.Caller(0)
-	root := filepath.Join(filepath.Dir(filename), "..", "..")
+	root := filepath.Join(filepath.Dir(filename), "..", "..", "..")
 	return filepath.Join(root, "migrations")
 }

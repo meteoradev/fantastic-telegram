@@ -313,7 +313,8 @@ func TestUserController_Update(t *testing.T) {
 		service        mockUserService
 		userID         string
 		input          updateUserRequest
-		currUserID     string
+		currUserID     int64
+		hasUserID      bool
 		expectedStatus int
 		expectedBody   string
 	}{
@@ -324,7 +325,8 @@ func TestUserController_Update(t *testing.T) {
 			}},
 			"67",
 			updateUserRequest{Username: "newname", Email: "new@example.com", Password: "newpassword123"},
-			"67",
+			67,
+			true,
 			http.StatusOK,
 			"",
 		},
@@ -333,27 +335,30 @@ func TestUserController_Update(t *testing.T) {
 			mockUserService{},
 			"abc",
 			updateUserRequest{Username: "newname", Email: "new@example.com", Password: "newpassword123"},
-			"67",
+			67,
+			true,
 			http.StatusBadRequest,
-			`{"error": "invalid user ID"}`,
+			`{"error":"invalid user ID"}`,
 		},
 		{
-			"invalid currUserID in context",
+			"missing userID in context",
 			mockUserService{},
 			"67",
 			updateUserRequest{Username: "newname", Email: "new@example.com", Password: "newpassword123"},
-			"abc",
-			http.StatusBadRequest,
-			`{"error": "invalid user ID"}`,
+			0,
+			false,
+			http.StatusUnauthorized,
+			`{"error":"unauthorized"}`,
 		},
 		{
 			"invalid JSON body",
 			mockUserService{},
 			"67",
 			updateUserRequest{},
-			"67",
+			67,
+			true,
 			http.StatusBadRequest,
-			`{"error": "invalid JSON"}`,
+			`{"error":"invalid JSON"}`,
 		},
 		{
 			"user not found",
@@ -362,9 +367,10 @@ func TestUserController_Update(t *testing.T) {
 			}},
 			"67",
 			updateUserRequest{Username: "newname", Email: "new@example.com", Password: "newpassword123"},
-			"67",
+			67,
+			true,
 			http.StatusNotFound,
-			`{"error": "user not found"}`,
+			`{"error":"user not found"}`,
 		},
 		{
 			"unexpected error",
@@ -373,9 +379,10 @@ func TestUserController_Update(t *testing.T) {
 			}},
 			"67",
 			updateUserRequest{Username: "newname", Email: "new@example.com", Password: "newpassword123"},
-			"67",
+			67,
+			true,
 			http.StatusBadRequest,
-			`{"error": "failed to get user"}`,
+			`{"error":"failed to update user"}`,
 		},
 	}
 
@@ -384,7 +391,7 @@ func TestUserController_Update(t *testing.T) {
 			ctrl := NewUserController(&tt.service)
 
 			var bodyReader *strings.Reader
-			if tt.expectedBody == `{"error": "invalid JSON"}` {
+			if tt.expectedBody == `{"error":"invalid JSON"}` {
 				bodyReader = strings.NewReader("not valid json{")
 			} else {
 				bodyBytes, _ := json.Marshal(tt.input)
@@ -394,7 +401,9 @@ func TestUserController_Update(t *testing.T) {
 			rctx := chi.NewRouteContext()
 			rctx.URLParams.Add("userID", tt.userID)
 			ctx := context.WithValue(context.Background(), chi.RouteCtxKey, rctx)
-			ctx = context.WithValue(ctx, "userID", tt.currUserID)
+			if tt.hasUserID {
+				ctx = context.WithValue(ctx, "userID", tt.currUserID)
+			}
 			req := httptest.NewRequest(http.MethodPut, "/users/"+tt.userID, bodyReader)
 			req = req.WithContext(ctx)
 			req.Header.Set("Content-Type", "application/json")
@@ -424,7 +433,8 @@ func TestUserController_Delete(t *testing.T) {
 		name           string
 		service        mockUserService
 		userID         string
-		currUserID     string
+		currUserID     int64
+		hasUserID      bool
 		expectedStatus int
 		expectedBody   string
 	}{
@@ -434,7 +444,8 @@ func TestUserController_Delete(t *testing.T) {
 				return nil
 			}},
 			"67",
-			"67",
+			67,
+			true,
 			http.StatusNoContent,
 			"",
 		},
@@ -442,17 +453,19 @@ func TestUserController_Delete(t *testing.T) {
 			"invalid userID in path",
 			mockUserService{},
 			"abc",
-			"67",
+			67,
+			true,
 			http.StatusBadRequest,
-			`{"error": "invalid user ID"}`,
+			`{"error":"invalid user ID"}`,
 		},
 		{
-			"invalid currUserID in context",
+			"missing userID in context",
 			mockUserService{},
 			"67",
-			"abc",
-			http.StatusBadRequest,
-			`{"error": "invalid user ID"}`,
+			0,
+			false,
+			http.StatusInternalServerError,
+			`{"error":"invalid user ID type"}`,
 		},
 		{
 			"user not found",
@@ -460,9 +473,10 @@ func TestUserController_Delete(t *testing.T) {
 				return service.ErrUserNotFound
 			}},
 			"999",
-			"67",
+			67,
+			true,
 			http.StatusNotFound,
-			`{"error": "user not found"}`,
+			`{"error":"user not found"}`,
 		},
 		{
 			"unexpected error",
@@ -470,9 +484,10 @@ func TestUserController_Delete(t *testing.T) {
 				return service.ErrUnexpected
 			}},
 			"67",
-			"67",
+			67,
+			true,
 			http.StatusBadRequest,
-			`{"error": "failed to get user"}`,
+			`{"error":"failed to delete user"}`,
 		},
 	}
 
@@ -483,7 +498,9 @@ func TestUserController_Delete(t *testing.T) {
 			rctx := chi.NewRouteContext()
 			rctx.URLParams.Add("userID", tt.userID)
 			ctx := context.WithValue(context.Background(), chi.RouteCtxKey, rctx)
-			ctx = context.WithValue(ctx, "userID", tt.currUserID)
+			if tt.hasUserID {
+				ctx = context.WithValue(ctx, "userID", tt.currUserID)
+			}
 			req := httptest.NewRequest(http.MethodDelete, "/users/"+tt.userID, nil)
 			req = req.WithContext(ctx)
 			w := httptest.NewRecorder()
