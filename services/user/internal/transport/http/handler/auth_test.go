@@ -1,4 +1,4 @@
-package handler
+﻿package handler
 
 import (
 	"context"
@@ -9,8 +9,8 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/disdreamq/fantastic-telegram/services/user/internal/domain"
-	"github.com/disdreamq/fantastic-telegram/services/user/internal/service"
+	"github.com/meteoradev/fantastic-telegram/services/user/internal/domain"
+	"github.com/meteoradev/fantastic-telegram/services/user/internal/service"
 )
 
 type mockAuthService struct {
@@ -130,3 +130,4 @@ func TestAuthController_Login(t *testing.T) {
 		})
 	}
 }
+

@@ -1,10 +1,10 @@
-package service
+﻿package service
 
 import (
 	"context"
 
-	"github.com/disdreamq/fantastic-telegram/services/user/internal/domain"
-	"github.com/disdreamq/fantastic-telegram/services/user/internal/port"
+	"github.com/meteoradev/fantastic-telegram/services/user/internal/domain"
+	"github.com/meteoradev/fantastic-telegram/services/user/internal/port"
 	"github.com/rs/zerolog/log"
 )
 
@@ -47,3 +47,4 @@ func (s *AuthService) Login(ctx context.Context, email, password string) (*domai
 		Msg("User loggined")
 	return domain.NewAuthResult(token, payload), nil
 }
+

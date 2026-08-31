@@ -1,10 +1,10 @@
-package postgres
+﻿package postgres
 
 import (
 	"context"
 	"time"
 
-	"github.com/disdreamq/fantastic-telegram/services/user/internal/domain"
+	"github.com/meteoradev/fantastic-telegram/services/user/internal/domain"
 	"github.com/jmoiron/sqlx"
 )
 
@@ -145,3 +145,4 @@ func (r *UserRepository) Delete(ctx context.Context, userID int64) error {
 	}
 	return nil
 }
+

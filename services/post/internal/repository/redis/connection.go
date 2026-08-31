@@ -1,10 +1,10 @@
-package redis
+﻿package redis
 
 import (
 	"context"
 	"strconv"
 
-	"github.com/disdreamq/fantastic-telegram/services/post/config"
+	"github.com/meteoradev/fantastic-telegram/services/post/config"
 	"github.com/redis/go-redis/v9"
 )
 
@@ -21,3 +21,4 @@ func RedisConnect(cfg *config.Config) (*redis.Client, error) {
 	}
 	return rdb, nil
 }
+

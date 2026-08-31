@@ -1,10 +1,10 @@
-package jwt
+﻿package jwt
 
 import (
 	"context"
 	"time"
 
-	"github.com/disdreamq/fantastic-telegram/services/user/internal/domain"
+	"github.com/meteoradev/fantastic-telegram/services/user/internal/domain"
 	"github.com/golang-jwt/jwt/v5"
 )
 
@@ -51,3 +51,4 @@ func (p *Provider) ValidateToken(tokenString string) (*domain.TokenPayload, erro
 	}
 	return domain.NewPayload(claims, time.Now().Add(p.expiry)), nil
 }
+

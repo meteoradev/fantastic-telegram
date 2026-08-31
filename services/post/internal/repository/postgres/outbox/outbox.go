@@ -1,10 +1,10 @@
-package outbox
+﻿package outbox
 
 import (
 	"context"
 	"time"
 
-	"github.com/disdreamq/fantastic-telegram/services/post/internal/domain"
+	"github.com/meteoradev/fantastic-telegram/services/post/internal/domain"
 	"github.com/jmoiron/sqlx"
 )
 
@@ -92,3 +92,4 @@ func (r *OutboxRepository) UpdatePosts(ctx context.Context, ids []int64) error {
 
 	return tx.Commit()
 }
+

@@ -1,10 +1,10 @@
-package handler
+﻿package handler
 
 import (
 	"time"
 
-	"github.com/disdreamq/fantastic-telegram/services/user/internal/infra/jwt"
-	"github.com/disdreamq/fantastic-telegram/services/user/internal/transport/http/middleware"
+	"github.com/meteoradev/fantastic-telegram/services/user/internal/infra/jwt"
+	"github.com/meteoradev/fantastic-telegram/services/user/internal/transport/http/middleware"
 	"github.com/go-chi/chi/v5"
 	"github.com/redis/go-redis/v9"
 	"github.com/rs/zerolog"
@@ -45,3 +45,4 @@ func NewRouter(
 	})
 	return r
 }
+

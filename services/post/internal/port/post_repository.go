@@ -1,9 +1,9 @@
-package port
+﻿package port
 
 import (
 	"context"
 
-	"github.com/disdreamq/fantastic-telegram/services/post/internal/domain"
+	"github.com/meteoradev/fantastic-telegram/services/post/internal/domain"
 )
 
 type PostRepository interface {
@@ -15,3 +15,4 @@ type PostRepository interface {
 	Delete(ctx context.Context, id int64) (string, error)
 	DeleteWithValidate(ctx context.Context, currUserID, id int64) (string, error)
 }
+

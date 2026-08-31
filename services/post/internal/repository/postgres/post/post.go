@@ -1,4 +1,4 @@
-package post
+﻿package post
 
 import (
 	"context"
@@ -6,8 +6,8 @@ import (
 	"encoding/json"
 	"time"
 
-	"github.com/disdreamq/fantastic-telegram/services/post/internal/domain"
-	"github.com/disdreamq/fantastic-telegram/services/post/internal/repository/postgres"
+	"github.com/meteoradev/fantastic-telegram/services/post/internal/domain"
+	"github.com/meteoradev/fantastic-telegram/services/post/internal/repository/postgres"
 	"github.com/jmoiron/sqlx"
 )
 
@@ -243,3 +243,4 @@ func (r *PostRepository) DeleteWithValidate(ctx context.Context, currUserID, ID 
 	}
 	return title, nil
 }
+

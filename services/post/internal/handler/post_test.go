@@ -1,4 +1,4 @@
-package handler
+﻿package handler
 
 import (
 	"context"
@@ -9,8 +9,8 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/disdreamq/fantastic-telegram/services/post/internal/domain"
-	"github.com/disdreamq/fantastic-telegram/services/post/internal/service"
+	"github.com/meteoradev/fantastic-telegram/services/post/internal/domain"
+	"github.com/meteoradev/fantastic-telegram/services/post/internal/service"
 	"github.com/go-chi/chi/v5"
 )
 
@@ -456,3 +456,4 @@ func TestPostController_Delete(t *testing.T) {
 		})
 	}
 }
+

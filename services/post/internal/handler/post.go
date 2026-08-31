@@ -1,7 +1,7 @@
-// Package handler Swagger documentation for the post service
+﻿// Package handler Swagger documentation for the post service
 // @title          Post Service API
 // @version        1.0
-// @description    REST API для управления постами блога
+// @description    REST API РґР»СЏ СѓРїСЂР°РІР»РµРЅРёСЏ РїРѕСЃС‚Р°РјРё Р±Р»РѕРіР°
 // @host           localhost:8081
 // @BasePath       /
 // @schemes        http
@@ -16,9 +16,9 @@ import (
 	"net/url"
 	"strconv"
 
-	"github.com/disdreamq/fantastic-telegram/services/post/internal/domain"
-	"github.com/disdreamq/fantastic-telegram/services/post/internal/port"
-	"github.com/disdreamq/fantastic-telegram/services/post/internal/service"
+	"github.com/meteoradev/fantastic-telegram/services/post/internal/domain"
+	"github.com/meteoradev/fantastic-telegram/services/post/internal/port"
+	"github.com/meteoradev/fantastic-telegram/services/post/internal/service"
 	"github.com/go-chi/chi/v5"
 )
 
@@ -282,3 +282,4 @@ func (c *PostController) Delete(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusNoContent)
 }
+

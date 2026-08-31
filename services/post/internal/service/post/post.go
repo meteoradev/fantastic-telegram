@@ -1,4 +1,4 @@
-package post
+﻿package post
 
 import (
 	"context"
@@ -7,9 +7,9 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/disdreamq/fantastic-telegram/services/post/internal/domain"
-	"github.com/disdreamq/fantastic-telegram/services/post/internal/port"
-	"github.com/disdreamq/fantastic-telegram/services/post/internal/service"
+	"github.com/meteoradev/fantastic-telegram/services/post/internal/domain"
+	"github.com/meteoradev/fantastic-telegram/services/post/internal/port"
+	"github.com/meteoradev/fantastic-telegram/services/post/internal/service"
 )
 
 type PostService struct {
@@ -194,3 +194,4 @@ func (p *PostService) DeleteWithValidate(ctx context.Context, currUserID, postID
 	service.LogDebug(ctx, "Deleted post with validate", "post_id", postID)
 	return nil
 }
+

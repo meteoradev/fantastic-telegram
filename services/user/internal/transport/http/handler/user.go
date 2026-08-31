@@ -1,4 +1,4 @@
-package handler
+﻿package handler
 
 import (
 	"encoding/json"
@@ -7,9 +7,9 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/disdreamq/fantastic-telegram/services/user/internal/domain"
-	"github.com/disdreamq/fantastic-telegram/services/user/internal/port"
-	"github.com/disdreamq/fantastic-telegram/services/user/internal/service"
+	"github.com/meteoradev/fantastic-telegram/services/user/internal/domain"
+	"github.com/meteoradev/fantastic-telegram/services/user/internal/port"
+	"github.com/meteoradev/fantastic-telegram/services/user/internal/service"
 	"github.com/go-chi/chi/v5"
 )
 
@@ -280,3 +280,4 @@ func (c *UserController) Delete(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusNoContent)
 }
+

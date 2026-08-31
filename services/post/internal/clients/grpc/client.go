@@ -1,4 +1,4 @@
-package client
+﻿package client
 
 import (
 	"context"
@@ -7,8 +7,8 @@ import (
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 
-	"github.com/disdreamq/fantastic-telegram/services/post/internal/domain"
-	pb "github.com/disdreamq/fantastic-telegram/services/post/proto"
+	"github.com/meteoradev/fantastic-telegram/services/post/internal/domain"
+	pb "github.com/meteoradev/fantastic-telegram/services/post/proto"
 )
 
 type grpcClient struct {
@@ -55,3 +55,4 @@ func (c *grpcClient) ValidateToken(ctx context.Context, token string) (*domain.C
 		Email:  resp.UserEmail,
 	}, nil
 }
+

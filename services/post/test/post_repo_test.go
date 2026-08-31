@@ -1,6 +1,6 @@
-package integration
+﻿package integration
 
-// Добавить получение пользователя TODO
+// Р”РѕР±Р°РІРёС‚СЊ РїРѕР»СѓС‡РµРЅРёРµ РїРѕР»СЊР·РѕРІР°С‚РµР»СЏ TODO
 
 // import (
 // 	"context"
@@ -10,9 +10,9 @@ package integration
 // 	"testing"
 // 	"time"
 
-// 	"github.com/disdreamq/fantastic-telegram/pkg/test/integration"
-// 	"github.com/disdreamq/fantastic-telegram/services/post/internal/domain"
-// 	"github.com/disdreamq/fantastic-telegram/services/post/internal/postgres"
+// 	"github.com/meteoradev/fantastic-telegram/pkg/test/integration"
+// 	"github.com/meteoradev/fantastic-telegram/services/post/internal/domain"
+// 	"github.com/meteoradev/fantastic-telegram/services/post/internal/postgres"
 // )
 
 // func TestPostRepository_Create(t *testing.T) {
@@ -505,3 +505,4 @@ package integration
 // 		}
 // 	})
 // }
+

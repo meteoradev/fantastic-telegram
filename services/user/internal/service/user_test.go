@@ -1,4 +1,4 @@
-package service_test
+﻿package service_test
 
 import (
 	"context"
@@ -6,8 +6,8 @@ import (
 	"errors"
 	"testing"
 
-	"github.com/disdreamq/fantastic-telegram/services/user/internal/domain"
-	"github.com/disdreamq/fantastic-telegram/services/user/internal/service"
+	"github.com/meteoradev/fantastic-telegram/services/user/internal/domain"
+	"github.com/meteoradev/fantastic-telegram/services/user/internal/service"
 )
 
 type mockUserRepo struct {
@@ -260,3 +260,4 @@ func TestUserService_Delete(t *testing.T) {
 		}
 	})
 }
+

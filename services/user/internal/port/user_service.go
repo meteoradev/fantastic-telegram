@@ -1,9 +1,9 @@
-package port
+﻿package port
 
 import (
 	"context"
 
-	"github.com/disdreamq/fantastic-telegram/services/user/internal/domain"
+	"github.com/meteoradev/fantastic-telegram/services/user/internal/domain"
 )
 
 type UserService interface {
@@ -13,3 +13,4 @@ type UserService interface {
 	Update(ctx context.Context, currUserID, userID int64, username, email, password string) error
 	Delete(ctx context.Context, currUserID, userID int64) error
 }
+

@@ -1,8 +1,8 @@
-package handler
+﻿package handler
 
 import (
-	"github.com/disdreamq/fantastic-telegram/services/post/internal/middleware"
-	"github.com/disdreamq/fantastic-telegram/services/post/internal/port"
+	"github.com/meteoradev/fantastic-telegram/services/post/internal/middleware"
+	"github.com/meteoradev/fantastic-telegram/services/post/internal/port"
 	"github.com/go-chi/chi/v5"
 	"github.com/redis/go-redis/v9"
 	"github.com/rs/zerolog"
@@ -39,3 +39,4 @@ func NewRouter(
 
 	return r
 }
+

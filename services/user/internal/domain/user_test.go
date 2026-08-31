@@ -1,11 +1,11 @@
-package domain_test
+﻿package domain_test
 
 import (
 	"errors"
 	"strings"
 	"testing"
 
-	"github.com/disdreamq/fantastic-telegram/services/user/internal/domain"
+	"github.com/meteoradev/fantastic-telegram/services/user/internal/domain"
 )
 
 func TestNewUser(t *testing.T) {
@@ -40,3 +40,4 @@ func TestNewUser(t *testing.T) {
 		}
 	})
 }
+

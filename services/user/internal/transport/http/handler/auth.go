@@ -1,12 +1,12 @@
-package handler
+﻿package handler
 
 import (
 	"encoding/json"
 	"net/http"
 
-	"github.com/disdreamq/fantastic-telegram/services/user/internal/domain"
-	"github.com/disdreamq/fantastic-telegram/services/user/internal/port"
-	"github.com/disdreamq/fantastic-telegram/services/user/internal/service"
+	"github.com/meteoradev/fantastic-telegram/services/user/internal/domain"
+	"github.com/meteoradev/fantastic-telegram/services/user/internal/port"
+	"github.com/meteoradev/fantastic-telegram/services/user/internal/service"
 )
 
 type AuthController struct {
@@ -79,3 +79,4 @@ func (a *AuthController) Login(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 	json.NewEncoder(w).Encode(NewAuthResponse(token))
 }
+

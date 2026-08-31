@@ -1,4 +1,4 @@
-package post_test
+﻿package post_test
 
 import (
 	"context"
@@ -8,9 +8,9 @@ import (
 	"testing"
 	"time"
 
-	"github.com/disdreamq/fantastic-telegram/services/post/internal/domain"
-	"github.com/disdreamq/fantastic-telegram/services/post/internal/service"
-	"github.com/disdreamq/fantastic-telegram/services/post/internal/service/post"
+	"github.com/meteoradev/fantastic-telegram/services/post/internal/domain"
+	"github.com/meteoradev/fantastic-telegram/services/post/internal/service"
+	"github.com/meteoradev/fantastic-telegram/services/post/internal/service/post"
 )
 
 type mockPostRepo struct {
@@ -574,3 +574,4 @@ func TestPostService_Delete(t *testing.T) {
 		}
 	})
 }
+

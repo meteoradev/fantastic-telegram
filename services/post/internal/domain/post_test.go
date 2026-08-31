@@ -1,4 +1,4 @@
-package domain_test
+﻿package domain_test
 
 import (
 	"errors"
@@ -6,7 +6,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/disdreamq/fantastic-telegram/services/post/internal/domain"
+	"github.com/meteoradev/fantastic-telegram/services/post/internal/domain"
 )
 
 func TestNewPost(t *testing.T) {
@@ -43,3 +43,4 @@ func TestNewPost(t *testing.T) {
 		}
 	})
 }
+

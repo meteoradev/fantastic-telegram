@@ -1,9 +1,9 @@
-module github.com/disdreamq/fantastic-telegram/services/user
+﻿module github.com/meteoradev/fantastic-telegram/services/user
 
 go 1.26.5
 
 require (
-	github.com/disdreamq/BlogApi v0.0.0-20260730142316-3c8d4a10fddc
+	github.com/meteoradev/BlogApi v0.0.0-20260730142316-3c8d4a10fddc
 	github.com/fatih/color v1.19.0
 	github.com/go-chi/chi/v5 v5.3.1
 	github.com/go-redis/redis_rate/v10 v10.0.1
@@ -101,3 +101,4 @@ require (
 	google.golang.org/genproto/googleapis/rpc v0.0.0-20260526163538-3dc84a4a5aaa // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 )
+

@@ -1,11 +1,11 @@
-package integration
+﻿package integration
 
 import (
 	"context"
 	"os"
 	"testing"
 
-	"github.com/disdreamq/BlogApi/test/fixtures"
+	"github.com/meteoradev/BlogApi/test/fixtures"
 )
 
 var testDB *TestDatabase
@@ -39,3 +39,4 @@ func startTestDatabase() *TestDatabase {
 
 	return testDB
 }
+

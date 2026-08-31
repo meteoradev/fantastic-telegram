@@ -1,4 +1,4 @@
-package service_test
+﻿package service_test
 
 import (
 	"context"
@@ -6,8 +6,8 @@ import (
 	"testing"
 	"time"
 
-	"github.com/disdreamq/fantastic-telegram/services/user/internal/domain"
-	"github.com/disdreamq/fantastic-telegram/services/user/internal/service"
+	"github.com/meteoradev/fantastic-telegram/services/user/internal/domain"
+	"github.com/meteoradev/fantastic-telegram/services/user/internal/service"
 )
 
 type mockTokenProvider struct {
@@ -164,3 +164,4 @@ func TestAuthService_Login(t *testing.T) {
 		}
 	})
 }
+

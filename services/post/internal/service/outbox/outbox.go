@@ -1,4 +1,4 @@
-package outbox
+﻿package outbox
 
 import (
 	"context"
@@ -6,7 +6,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/disdreamq/fantastic-telegram/services/post/internal/domain"
+	"github.com/meteoradev/fantastic-telegram/services/post/internal/domain"
 	"github.com/rs/zerolog/log"
 	"github.com/segmentio/kafka-go"
 )
@@ -96,3 +96,4 @@ func (s *Producer) Process(ctx context.Context) {
 		Str("IDs", b.String()).
 		Msg("Send posts to kafka")
 }
+

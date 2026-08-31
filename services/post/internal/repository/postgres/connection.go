@@ -1,10 +1,10 @@
-package postgres
+﻿package postgres
 
 import (
 	"fmt"
 	"time"
 
-	"github.com/disdreamq/fantastic-telegram/services/post/config"
+	"github.com/meteoradev/fantastic-telegram/services/post/config"
 	_ "github.com/jackc/pgx/v5/stdlib"
 	"github.com/jmoiron/sqlx"
 )
@@ -22,3 +22,4 @@ func NewPostgresDB(cfg *config.Config) (*sqlx.DB, error) {
 
 	return db, nil
 }
+

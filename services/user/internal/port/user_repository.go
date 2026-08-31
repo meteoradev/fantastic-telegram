@@ -1,9 +1,9 @@
-package port
+﻿package port
 
 import (
 	"context"
 
-	"github.com/disdreamq/fantastic-telegram/services/user/internal/domain"
+	"github.com/meteoradev/fantastic-telegram/services/user/internal/domain"
 )
 
 type UserCreater interface {
@@ -36,3 +36,4 @@ type UserRepository interface {
 	UserUpdater
 	UserDeleter
 }
+

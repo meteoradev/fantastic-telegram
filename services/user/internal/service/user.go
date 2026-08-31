@@ -1,11 +1,11 @@
-package service
+﻿package service
 
 import (
 	"context"
 	"database/sql"
 
-	"github.com/disdreamq/fantastic-telegram/services/user/internal/domain"
-	"github.com/disdreamq/fantastic-telegram/services/user/internal/port"
+	"github.com/meteoradev/fantastic-telegram/services/user/internal/domain"
+	"github.com/meteoradev/fantastic-telegram/services/user/internal/port"
 	"github.com/rs/zerolog/log"
 )
 
@@ -224,3 +224,4 @@ func processPassword(pass string, hasher port.Hasher) (string, error) {
 	}
 	return pass, nil
 }
+

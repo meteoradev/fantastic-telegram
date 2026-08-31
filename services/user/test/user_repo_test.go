@@ -1,4 +1,4 @@
-package integration
+﻿package integration
 
 import (
 	"context"
@@ -9,8 +9,8 @@ import (
 	"testing"
 	"time"
 
-	"github.com/disdreamq/fantastic-telegram/services/user/internal/domain"
-	"github.com/disdreamq/fantastic-telegram/services/user/internal/repository/postgres"
+	"github.com/meteoradev/fantastic-telegram/services/user/internal/domain"
+	"github.com/meteoradev/fantastic-telegram/services/user/internal/repository/postgres"
 )
 
 func TestUserRepository_Create(t *testing.T) {
@@ -229,3 +229,4 @@ func TestUserRepository_Delete(t *testing.T) {
 		}
 	})
 }
+

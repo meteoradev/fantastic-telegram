@@ -1,4 +1,4 @@
-module github.com/disdreamq/fantastic-telegram/notification
+﻿module github.com/meteoradev/fantastic-telegram/notification
 
 go 1.26.5
 
@@ -20,3 +20,4 @@ require (
 	golang.org/x/net v0.57.0 // indirect
 	golang.org/x/sys v0.47.0 // indirect
 )
+

@@ -1,11 +1,11 @@
-package middleware
+﻿package middleware
 
 import (
 	"context"
 	"net/http"
 	"strings"
 
-	"github.com/disdreamq/fantastic-telegram/services/post/internal/port"
+	"github.com/meteoradev/fantastic-telegram/services/post/internal/port"
 )
 
 type AuthMiddleware struct {
@@ -41,3 +41,4 @@ func (m *AuthMiddleware) Authenticate(next http.Handler) http.Handler {
 		next.ServeHTTP(w, r.WithContext(ctx))
 	})
 }
+

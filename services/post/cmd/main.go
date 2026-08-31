@@ -1,13 +1,13 @@
-// @title           Blog API
+﻿// @title           Blog API
 // @version         1.0
-// @description     REST API для блога с авторизацией, управлением пользователями и постами
+// @description     REST API РґР»СЏ Р±Р»РѕРіР° СЃ Р°РІС‚РѕСЂРёР·Р°С†РёРµР№, СѓРїСЂР°РІР»РµРЅРёРµРј РїРѕР»СЊР·РѕРІР°С‚РµР»СЏРјРё Рё РїРѕСЃС‚Р°РјРё
 // @host            localhost:8081
 // @BasePath        /
 // @schemes         http
 // @securityDefinitions.apikey BearerAuth
 // @in                        header
 // @name                      Authorization
-// @description               Введите токен в формате: Bearer <ваш_токен>
+// @description               Р’РІРµРґРёС‚Рµ С‚РѕРєРµРЅ РІ С„РѕСЂРјР°С‚Рµ: Bearer <РІР°С€_С‚РѕРєРµРЅ>
 
 package main
 
@@ -20,20 +20,20 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/disdreamq/fantastic-telegram/services/post/config"
-	"github.com/disdreamq/fantastic-telegram/services/post/internal/repository/postgres"
-	o "github.com/disdreamq/fantastic-telegram/services/post/internal/repository/postgres/outbox"
-	"github.com/disdreamq/fantastic-telegram/services/post/internal/repository/postgres/post"
-	"github.com/disdreamq/fantastic-telegram/services/post/internal/repository/redis"
-	"github.com/disdreamq/fantastic-telegram/services/post/internal/service/outbox"
-	p "github.com/disdreamq/fantastic-telegram/services/post/internal/service/post"
+	"github.com/meteoradev/fantastic-telegram/services/post/config"
+	"github.com/meteoradev/fantastic-telegram/services/post/internal/repository/postgres"
+	o "github.com/meteoradev/fantastic-telegram/services/post/internal/repository/postgres/outbox"
+	"github.com/meteoradev/fantastic-telegram/services/post/internal/repository/postgres/post"
+	"github.com/meteoradev/fantastic-telegram/services/post/internal/repository/redis"
+	"github.com/meteoradev/fantastic-telegram/services/post/internal/service/outbox"
+	p "github.com/meteoradev/fantastic-telegram/services/post/internal/service/post"
 	"github.com/segmentio/kafka-go"
 
-	_ "github.com/disdreamq/fantastic-telegram/services/post/docs"
+	_ "github.com/meteoradev/fantastic-telegram/services/post/docs"
 
-	"github.com/disdreamq/fantastic-telegram/services/post/internal/handler"
+	"github.com/meteoradev/fantastic-telegram/services/post/internal/handler"
 
-	gr "github.com/disdreamq/fantastic-telegram/services/post/internal/clients/grpc"
+	gr "github.com/meteoradev/fantastic-telegram/services/post/internal/clients/grpc"
 	"github.com/joho/godotenv"
 	"github.com/rs/zerolog"
 	httpSwagger "github.com/swaggo/http-swagger"
@@ -140,3 +140,4 @@ func main() {
 		logger.Fatal().Err(err).Msg("Fatal error during parse env file.")
 	}
 }
+

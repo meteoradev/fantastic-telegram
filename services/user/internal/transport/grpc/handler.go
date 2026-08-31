@@ -1,10 +1,10 @@
-package grpc
+﻿package grpc
 
 import (
 	"context"
 
-	"github.com/disdreamq/fantastic-telegram/services/user/internal/port"
-	pb "github.com/disdreamq/fantastic-telegram/services/user/proto"
+	"github.com/meteoradev/fantastic-telegram/services/user/internal/port"
+	pb "github.com/meteoradev/fantastic-telegram/services/user/proto"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 )
@@ -28,3 +28,4 @@ func (s *userServer) ValidateToken(ctx context.Context, in *pb.ValidateTokenRequ
 func NewUserServer(p port.TokenProvider) pb.UserServiceServer {
 	return &userServer{p: p}
 }
+

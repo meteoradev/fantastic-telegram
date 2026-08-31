@@ -1,13 +1,13 @@
-// @title           Blog API
+﻿// @title           Blog API
 // @version         1.0
-// @description     REST API для блога с авторизацией, управлением пользователями и постами
+// @description     REST API РґР»СЏ Р±Р»РѕРіР° СЃ Р°РІС‚РѕСЂРёР·Р°С†РёРµР№, СѓРїСЂР°РІР»РµРЅРёРµРј РїРѕР»СЊР·РѕРІР°С‚РµР»СЏРјРё Рё РїРѕСЃС‚Р°РјРё
 // @host            localhost:8080
 // @BasePath        /
 // @schemes         http
 // @securityDefinitions.apikey BearerAuth
 // @in                        header
 // @name                      Authorization
-// @description               Введите токен в формате: Bearer <ваш_токен>
+// @description               Р’РІРµРґРёС‚Рµ С‚РѕРєРµРЅ РІ С„РѕСЂРјР°С‚Рµ: Bearer <РІР°С€_С‚РѕРєРµРЅ>
 
 package main
 
@@ -21,18 +21,18 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/disdreamq/fantastic-telegram/services/user/config"
-	_ "github.com/disdreamq/fantastic-telegram/services/user/docs"
-	"github.com/disdreamq/fantastic-telegram/services/user/internal/infra/hasher"
-	"github.com/disdreamq/fantastic-telegram/services/user/internal/infra/jwt"
-	"github.com/disdreamq/fantastic-telegram/services/user/internal/repository/postgres"
-	"github.com/disdreamq/fantastic-telegram/services/user/internal/repository/redis"
-	gr "github.com/disdreamq/fantastic-telegram/services/user/internal/transport/grpc"
+	"github.com/meteoradev/fantastic-telegram/services/user/config"
+	_ "github.com/meteoradev/fantastic-telegram/services/user/docs"
+	"github.com/meteoradev/fantastic-telegram/services/user/internal/infra/hasher"
+	"github.com/meteoradev/fantastic-telegram/services/user/internal/infra/jwt"
+	"github.com/meteoradev/fantastic-telegram/services/user/internal/repository/postgres"
+	"github.com/meteoradev/fantastic-telegram/services/user/internal/repository/redis"
+	gr "github.com/meteoradev/fantastic-telegram/services/user/internal/transport/grpc"
 	"google.golang.org/grpc"
 
-	"github.com/disdreamq/fantastic-telegram/services/user/internal/service"
-	"github.com/disdreamq/fantastic-telegram/services/user/internal/transport/http/handler"
-	pb "github.com/disdreamq/fantastic-telegram/services/user/proto"
+	"github.com/meteoradev/fantastic-telegram/services/user/internal/service"
+	"github.com/meteoradev/fantastic-telegram/services/user/internal/transport/http/handler"
+	pb "github.com/meteoradev/fantastic-telegram/services/user/proto"
 	"github.com/fatih/color"
 
 	"github.com/joho/godotenv"
@@ -77,12 +77,12 @@ func printBanner(cfg *config.Config) {
 	white.Printf("   Rate Limit:  Public=%d RPM, Protected=%d RPM\n", cfg.PublicRPM, cfg.ProtectedRPM)
 	println()
 	green.Println("Services:")
-	green.Println("   ✓ PostgreSQL connected")
-	green.Println("   ✓ Redis connected")
-	green.Println("   ✓ JWT Auth middleware enabled")
-	green.Println("   ✓ Rate limiting enabled")
-	green.Println("   ✓ Logging middleware enabled")
-	green.Println("   ✓ Recovery middleware enabled")
+	green.Println("   вњ“ PostgreSQL connected")
+	green.Println("   вњ“ Redis connected")
+	green.Println("   вњ“ JWT Auth middleware enabled")
+	green.Println("   вњ“ Rate limiting enabled")
+	green.Println("   вњ“ Logging middleware enabled")
+	green.Println("   вњ“ Recovery middleware enabled")
 	println()
 	magenta.Println("User URLs:")
 	white.Printf("   API Base:     http://localhost:%d/\n", http_port)
@@ -192,3 +192,4 @@ func main() {
 	rdb.Close()
 
 }
+
