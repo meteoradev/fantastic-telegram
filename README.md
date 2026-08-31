@@ -29,7 +29,7 @@ Built with Go best practices – Clean Architecture, fully tested, and container
 ### Steps
 ```bash
 # 1. clone this repository:
-git clone https://github.com/disdreamq/fantastic-telegram.git
+git clone https://github.com/meteoradev/fantastic-telegram.git
 cd fantastic-telegram
 # 2. run the project
 docker compose up -d
