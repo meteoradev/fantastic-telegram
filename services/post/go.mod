@@ -1,4 +1,4 @@
-﻿module github.com/meteoradev/fantastic-telegram/services/post
+module github.com/meteoradev/fantastic-telegram/services/post
 
 go 1.26.5
 

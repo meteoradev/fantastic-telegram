@@ -5,7 +5,6 @@ import (
 	"os"
 	"testing"
 
-	"github.com/meteoradev/BlogApi/test/fixtures"
 )
 
 var testDB *TestDatabase
@@ -33,10 +32,9 @@ func startTestDatabase() *TestDatabase {
 		panic("failed to start postgres container: " + err.Error())
 	}
 
-	if err := fixtures.RunMigrations(testDB.ConnStr); err != nil {
+	if err := RunMigrations(testDB.ConnStr); err != nil {
 		panic(err)
 	}
 
 	return testDB
 }
-

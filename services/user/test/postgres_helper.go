@@ -6,7 +6,6 @@ import (
 	"testing"
 	"time"
 
-	"github.com/meteoradev/BlogApi/test/fixtures"
 	"github.com/jmoiron/sqlx"
 	_ "github.com/lib/pq"
 	"github.com/testcontainers/testcontainers-go"
@@ -71,7 +70,7 @@ func StartTestPostgres(t *testing.T) *TestDatabase {
 
 	testcontainers.CleanupContainer(t, testDB.Container)
 
-	if err := fixtures.RunMigrations(testDB.ConnStr); err != nil {
+	if err := RunMigrations(testDB.ConnStr); err != nil {
 		t.Fatal("failed to run migrations:", err)
 	}
 

@@ -1,4 +1,4 @@
-﻿module github.com/meteoradev/fantastic-telegram/notification
+module github.com/meteoradev/fantastic-telegram/notification
 
 go 1.26.5
 

@@ -30,10 +30,10 @@ import (
 	gr "github.com/meteoradev/fantastic-telegram/services/user/internal/transport/grpc"
 	"google.golang.org/grpc"
 
+	"github.com/fatih/color"
 	"github.com/meteoradev/fantastic-telegram/services/user/internal/service"
 	"github.com/meteoradev/fantastic-telegram/services/user/internal/transport/http/handler"
 	pb "github.com/meteoradev/fantastic-telegram/services/user/proto"
-	"github.com/fatih/color"
 
 	"github.com/joho/godotenv"
 	"github.com/rs/zerolog"
@@ -192,4 +192,3 @@ func main() {
 	rdb.Close()
 
 }
-

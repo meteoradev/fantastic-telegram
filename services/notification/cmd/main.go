@@ -1,4 +1,4 @@
-﻿package main
+package main
 
 import (
 	"context"
@@ -7,9 +7,9 @@ import (
 	"strconv"
 	"syscall"
 
+	"github.com/joho/godotenv"
 	"github.com/meteoradev/fantastic-telegram/notification/config"
 	k "github.com/meteoradev/fantastic-telegram/notification/internal/kafka"
-	"github.com/joho/godotenv"
 	"github.com/rs/zerolog"
 	"github.com/segmentio/kafka-go"
 )
@@ -45,4 +45,3 @@ func main() {
 	logger.Info().Msg("Shutting down")
 
 }
-
